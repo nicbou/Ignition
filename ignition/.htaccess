@@ -1,0 +1,3 @@
+#Protect these files from direct access
+Order Allow,Deny
+Deny from All

@@ -1,0 +1,122 @@
+<?php
+//Define the block interface
+abstract class Block{
+	protected $bean;
+
+	protected function __construct($name){
+		$name = strtolower($name);
+
+		//Find a record named $name in the block's table, or create one
+		$this->bean = R::findOne( strtolower(get_class($this)), ' name=? ', array($name) );
+		if( is_null($this->bean) ){
+			$this->bean = R::dispense( strtolower(get_class($this)) );
+			$this->setName($name);
+			$this->setContent(_('This block has no content yet'));
+			R::store($this->bean);
+		}
+	}
+
+	function getName(){
+		return $this->bean->name;
+	}
+	function setName($name){
+		$this->bean->name = $name;
+	}
+
+	function getBean(){
+		return $this->bean;
+	}
+
+	function getContent(){
+		return $this->bean->content;
+	}
+	function setContent($content){
+		$this->bean->content = $content;
+	}
+
+	static function saveChanges($postdata){
+		
+	}
+
+	//Return a block with a given name
+	static function get($name){
+		$block_type = get_called_class();
+		return new $block_type($name);
+	}
+
+	//Echo or return a the block, or its editor if the user is connected
+	static function show($name, $echo = true){
+		$block_type = get_called_class();
+		$block = new $block_type($name);
+
+		$output = "";
+		if( is_admin() && is_editing($name) ){
+			$errors = $block->processEditor();
+			if( !is_array($errors) )
+				$output = $block->getEditor();
+			elseif ( count($errors) == 0 )
+				$output = $block->getEditable();
+			else
+				$output = $block->getEditor($errors);
+		}
+		elseif( is_admin() && !is_editing($name) ){
+			$output = $block->getEditable($block);
+		}
+		else{
+			$output = $block->getDisplayable($block);
+		}
+
+		if($echo)
+			echo $output;
+
+		return $output;
+	}
+
+	//Get an editor for this block. This can be a form or a WYSIWYG editor, for instance
+	protected function getEditor($errors = array()){
+		return "
+			<form class='ignition-editor' method='post'>
+				<textarea name='content'>".$this->getContent()."</textarea>
+				<input type='submit' value='Save'/>
+			</form>
+		";
+	}
+
+	//Process the editor's content, return an associative array of errors, or false if there's nothing to process. If dry run is true, do not save changes
+	protected function processEditor($dry_run = false){
+		$errors = array();
+		if( isset($_POST['content']) ){
+			if($dry_run == false){
+				$this->setContent($_POST['content']);
+				R::store($this->bean);
+			}
+			return $errors;
+		}else{
+			return false;
+		}
+		
+	}
+
+	//Show this block as editable
+	protected function getEditable(){
+		$block_type = get_class($this);
+		return
+			'<div class="ignition-editable">
+				<a href="?edit='.$this->getName().'" class="ignition-edit-link">'._('Edit this block').'</a>
+				'.$block_type::getDisplayable($this).'
+			</div>';
+	}
+
+	//Show this block
+	protected function getDisplayable(){
+		return "
+			<p>".$this->getContent()."</p>
+		";
+	}
+}
+
+//Include Block implementations
+foreach (glob(dirname(__FILE__)."/*.block.php") as $filename){
+	include_once $filename;
+}
+?>
