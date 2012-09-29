@@ -23,6 +23,12 @@ Ignition makes use of [Redbean](http://redbeanphp.com), a tiny ORM that automati
 1. At the very beginning of your page, even before the doctype and PHP code, insert the following tag: <?php include('/path/to/ignition/ignition.php') ?>
 1. To insert a block of text, use the following code: <?php TextBlock::show('my_text_area') ?>. There are other available types such as RawTextBlock (for plain HTML) and ParagraphBlock (converts line breaks to paragraphs).
 
+### Editing blocks of text
+
+1. Add ?login at the end of your URL to connect
+1. Once logged in, you will be able to edit your blocks.
+1. To log out, add ?logout at the end of the URL
+
 ## How to extend
 
 The default Block class in block.php defines the structure of a typical block. You can define your own by extending existing Block classes, adding features such as rich text editors and even file uploads.
