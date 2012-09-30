@@ -9,6 +9,12 @@ Ignition makes use of [Redbean](http://redbeanphp.com), a tiny ORM that automati
 
 ## How to use
 
+### Requirements
+
+Ignition requires PHP 5.3 and a database to run, that's it.
+
+Although a fallback function is present, the strings used by Ignition use gettext for easy translation.
+
 ### The files
 
 1. Copy the ignition folder on your website. Its location does not matter, as long as you can include it in your pages.

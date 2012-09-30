@@ -52,6 +52,11 @@
 				return false;
 		}
 
+	//Gettext fallback
+		if( !function_exists('_')){
+			function _($string){return $string;}
+		}
+
 //Connect to the database with the RedBean ORM
 	require_once(dirname(__FILE__)."/redbean.php");
 	R::setup('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME,DATABASE_USER,DATABASE_PASSWORD);
