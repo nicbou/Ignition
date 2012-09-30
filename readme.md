@@ -26,8 +26,10 @@ Although a fallback function is present, the strings used by Ignition use gettex
 
 ### Configuring Ignition
 
-1. At the very beginning of your page, even before the doctype and PHP code, insert the following tag: <?php include('/path/to/ignition/ignition.php') ?>
-1. To insert a block of text, use the following code: <?php TextBlock::show('my_text_area') ?>. There are other available types such as RawTextBlock (for plain HTML) and ParagraphBlock (converts line breaks to paragraphs).
+1. At the very beginning of your page, even before the doctype and PHP code, insert the following tag: *<?php include('/path/to/ignition/ignition.php') ?>*
+1. To insert a block of text, use the following code: *<?php TextBlock::show('name_of_your_block') ?>*. There are other available types such as RawTextBlock (for plain HTML) and ParagraphBlock (converts line breaks to paragraphs).
+
+The name of the block is simply used to identify the block. This also means you can reuse a block at different places on your site.
 
 ### Editing blocks of text
 
@@ -35,8 +37,20 @@ Although a fallback function is present, the strings used by Ignition use gettex
 1. Once logged in, you will be able to edit your blocks.
 1. To log out, add ?logout at the end of the URL
 
+### Built-in block types
+
+Currently, Ignition offers the following block types:
+
+* **RawTextBlock** supports raw HTML and doesn't escape tags.
+* **TextBlock** handles plain text, but escapes HTML.
+* **ParagraphBlock** converts double line breaks to paragraphs, and line breaks to <br> tags.
+
 ## How to extend
 
 The default Block class in block.php defines the structure of a typical block. You can define your own by extending existing Block classes, adding features such as rich text editors and even file uploads.
 
 The login page is contained within login.php, and can also be edited. Considering how light the code is (just under 26kb, not counting Redbean), it's a breeze to edit and extend.
+
+### Creating new blocks
+
+Creating a new block is as simple as extending a class and redefining the required functions. The abstrack Block class under /ignition/blocks/block.php is an example of a working block. Once you are done, you must save your block under the blocks folder with a name ending with .block.php .

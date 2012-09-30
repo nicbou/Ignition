@@ -1,12 +1,14 @@
 <?php
-//Define the block interface
+//Define the default block interface
+
 abstract class Block{
 	protected $bean;
 
+	//The constructor takes a name to either fetch or create a block
 	protected function __construct($name){
 		$name = strtolower($name);
 
-		//Find a record named $name in the block's table, or create one
+		//Find a record named $name in the block's table, or create an empty one
 		$this->bean = R::findOne( strtolower(get_class($this)), ' name=? ', array($name) );
 		if( is_null($this->bean) ){
 			$this->bean = R::dispense( strtolower(get_class($this)) );
@@ -16,6 +18,8 @@ abstract class Block{
 		}
 	}
 
+
+	//The block's name is a human-readable identifier used to fetch the block from the database
 	function getName(){
 		return $this->bean->name;
 	}
@@ -23,6 +27,7 @@ abstract class Block{
 		$this->bean->name = $name;
 	}
 
+	//Beans are the storage units used by redbean
 	function getBean(){
 		return $this->bean;
 	}
@@ -34,11 +39,7 @@ abstract class Block{
 		$this->bean->content = $content;
 	}
 
-	static function saveChanges($postdata){
-		
-	}
-
-	//Return a block with a given name
+	//Return a block with a given name, instead of outputting it
 	static function get($name){
 		$block_type = get_called_class();
 		return new $block_type($name);
@@ -82,7 +83,8 @@ abstract class Block{
 		";
 	}
 
-	//Process the editor's content, return an associative array of errors, or false if there's nothing to process. If dry run is true, do not save changes
+	//Process the editor's content, return an associative array of errors, or false if
+	//there's nothing to process. If dry run is true, do not save changes.
 	protected function processEditor($dry_run = false){
 		$errors = array();
 		if( isset($_POST['content']) ){
@@ -91,10 +93,10 @@ abstract class Block{
 				R::store($this->bean);
 			}
 			return $errors;
-		}else{
+		}
+		else{
 			return false;
 		}
-		
 	}
 
 	//Show this block as editable

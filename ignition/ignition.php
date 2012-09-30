@@ -1,12 +1,12 @@
 <?php 
 
-//Include the ignition database
+//Include the ignition config
 	include_once(dirname(__FILE__)."/config.php");
 
 //User authentication
 	session_start();
 
-	//Log the user in
+	//Log the user in using the correct password comparison method
 		if( isset($_POST['username']) && isset($_POST['password']) ){
 			if( $_POST['username'] == ADMIN_USERNAME ){
 				$comparison = false;
@@ -27,7 +27,7 @@
 			}
 		}
 
-	//Show the login form
+	//Show the login form if ?login is appended to the URL
 		if( isset($_GET['login']) ){
 			include(dirname(__FILE__)."/login.php");
 			exit();
@@ -37,7 +37,7 @@
 			session_destroy();
 		}
 
-	//Login functions
+	//State functions
 		function is_admin(){
 			if( isset($_SESSION['username']) && !empty($_SESSION['username']) )
 				return true;
@@ -52,7 +52,7 @@
 				return false;
 		}
 
-	//Gettext fallback
+	//If gettext isn't enabled, define a fallback function to output text
 		if( !function_exists('_')){
 			function _($string){return $string;}
 		}
@@ -61,7 +61,7 @@
 	require_once(dirname(__FILE__)."/redbean.php");
 	R::setup('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME,DATABASE_USER,DATABASE_PASSWORD);
 
-//Load the default block, which in turn loads implementations of it
+//Load the default block. Implementations of it are loaded at the end of block.php
 	include_once(dirname(__FILE__)."/blocks/block.php");
 
 ?>
