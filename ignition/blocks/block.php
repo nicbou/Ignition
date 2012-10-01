@@ -48,9 +48,18 @@ abstract class Block{
 	//Echo or return a the block, or its editor if the user is connected
 	static function show($name, $echo = true){
 		$block_type = get_called_class();
-		$block = new $block_type($name);
+		$block = $block_type::get($name);
 
 		$output = "";
+		/* By default, blocks have three states:
+		** - getDisplayable() returns the public version of the block
+		** - getEditable() returns the editable version of the block
+		** - getEditor() returns the form used to edit this block type
+		** processEditor() is called when the block editor is submitting its
+		** changes, then calls getEditor with a list of errors.
+		**
+		** It's entirely possible to override any of these functions
+		*/
 		if( is_admin() && is_editing($name) ){
 			$errors = $block->processEditor();
 			if( !is_array($errors) )

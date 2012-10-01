@@ -11,7 +11,7 @@ Ignition makes use of [Redbean](http://redbeanphp.com), a tiny ORM that automati
 
 ### Requirements
 
-Ignition requires PHP 5.3 and a database to run, that's it.
+Ignition requires PHP 5.3, bcrypt and a database to run, that's it!
 
 Although a fallback function is present, the strings used by Ignition use gettext for easy translation.
 
@@ -33,9 +33,9 @@ The name of the block is simply used to identify the block. This also means you 
 
 ### Editing blocks of text
 
-1. Add ?login at the end of your URL to connect
-1. Once logged in, you will be able to edit your blocks.
-1. To log out, add ?logout at the end of the URL
+1. Add ?login at the end of your URL to connect. If it's your first time, you will be asked to create a user.
+1. Once logged in, you will be able to edit your blocks by clicking the "Edit block" link next to them.
+1. To log out, add ?logout at the end of the URL. Simple, isn't it?
 
 ### Built-in block types
 
