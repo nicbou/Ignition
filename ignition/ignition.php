@@ -76,7 +76,10 @@
 			function _($string){return $string;}
 		}
 
-//Load the default block. Implementations of it are loaded at the end of block.php
-	include_once(dirname(__FILE__)."/blocks/block.php");
+	//Load the default block. Implementations of it are loaded at the end of block.php
+		include_once(dirname(__FILE__)."/blocks/block.php");
 
-?>
+	//Include Block implementations
+		foreach (glob(dirname(__FILE__)."/*.block.php") as $filename){
+			include_once $filename;
+		}

@@ -125,9 +125,3 @@ abstract class Block{
 		";
 	}
 }
-
-//Include Block implementations
-foreach (glob(dirname(__FILE__)."/*.block.php") as $filename){
-	include_once $filename;
-}
-?>

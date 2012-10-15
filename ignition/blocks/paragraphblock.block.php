@@ -15,4 +15,3 @@ class ParagraphBlock extends Block{
 		return nl2br($escaped_paragraphs);
 	}
 }
-?>

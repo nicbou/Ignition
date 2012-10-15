@@ -14,4 +14,3 @@ class RawTextBlock extends Block{
 		";
 	}
 }
-?>

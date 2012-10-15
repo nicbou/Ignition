@@ -5,4 +5,3 @@ class TextBlock extends Block{
 		return nl2br(htmlspecialchars($this->bean->content,ENT_QUOTES,'UTF-8'));
 	}
 }
-?>

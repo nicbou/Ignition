@@ -5,7 +5,3 @@
 	define('DATABASE_NAME','...');
 	define('DATABASE_USER','...');
 	define('DATABASE_PASSWORD','...');
-
-//You're ready to go now!
-
-?>
