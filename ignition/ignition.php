@@ -11,7 +11,7 @@
 	session_start();
 
 	//Setup bcrypt to safely store and compare user passwords
-		function get_bcrypt_salt($salt){
+		function getBcryptSalt($salt){
 			//We use blowfish, and require it
 			if( CRYPT_BLOWFISH != 1 )
 				throw new Exception("bcrypt is not supported by your PHP installation");
@@ -27,7 +27,7 @@
 			$user = R::findOne(
 				'ignition_users',
 				' username=? AND password=?',
-				array( $_POST['username'], crypt( $_POST['password'],get_bcrypt_salt($_POST['username']) ) )
+				array( $_POST['username'], crypt( $_POST['password'],getBcryptSalt($_POST['username']) ) )
 			);
 
 			if( !is_null($user) )
@@ -38,7 +38,7 @@
 		if( isset($_POST['newusername']) && isset($_POST['newpassword']) && R::count('users') == 0 ){
 			$user = R::dispense('ignition_users');
 			$user->username = $_POST['newusername'];
-			$user->password = crypt( $_POST['newpassword'],get_bcrypt_salt($_POST['newusername']) );
+			$user->password = crypt( $_POST['newpassword'],getBcryptSalt($_POST['newusername']) );
 			R::store($user);
 			$_SESSION['username'] = $user->username;
 		}
@@ -60,11 +60,11 @@
 		}
 
 	//Application state functions
-		function is_admin(){
+		function isAdmin(){
 			return ( isset($_SESSION['username']) && !empty($_SESSION['username']) );
 		}
 
-		function is_editing($block_name){
+		function isEditing($block_name){
 			return ( isset($_GET['edit']) && $_GET['edit']==$block_name );
 		}
 

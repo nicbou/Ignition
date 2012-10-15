@@ -60,7 +60,7 @@ abstract class Block{
 		**
 		** It's entirely possible to override any of these functions
 		*/
-		if( is_admin() && is_editing($name) ){
+		if( isAdmin() && isEditing($name) ){
 			$errors = $block->processEditor();
 			if( !is_array($errors) )
 				$output = $block->getEditor();
@@ -69,7 +69,7 @@ abstract class Block{
 			else
 				$output = $block->getEditor($errors);
 		}
-		elseif( is_admin() && !is_editing($name) ){
+		elseif( isAdmin() && !isEditing($name) ){
 			$output = $block->getEditable($block);
 		}
 		else{
