@@ -49,8 +49,14 @@ Currently, Ignition offers the following block types:
 
 The default Block class in block.php defines the structure of a typical block. You can define your own by extending existing Block classes, adding features such as rich text editors and even file uploads.
 
-The login page is contained within login.php, and can also be edited. Considering how light the code is (just under 26kb, not counting Redbean), it's a breeze to edit and extend.
-
 ### Creating new blocks
 
 Creating a new block is as simple as extending a class and redefining the required functions. The abstrack Block class under /ignition/blocks/block.php is an example of a working block. Once you are done, you must save your block under the blocks folder with a name ending with .block.php .
+
+### Using a different authentication method
+
+The default authentication manager is in the authentication folder. You can easily create your own manager if you prefer to use another database. Simply implement the AuthManager interface and change the current manager in ignition.php.
+
+### Editing templates
+
+The templates are located in the /templates folder, and don't use any fancy markup. Considering how light the code is (just under 26kb, not counting Redbean), extending any part of the application should be fairly straightforward.

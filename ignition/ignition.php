@@ -8,78 +8,55 @@
 	R::setup('mysql:host='.DATABASE_HOST.';dbname='.DATABASE_NAME,DATABASE_USER,DATABASE_PASSWORD);
 
 //User authentication
-	session_start();
 
-	//Setup bcrypt to safely store and compare user passwords
-		function getBcryptSalt($salt){
-			//We use blowfish, and require it
-			if( CRYPT_BLOWFISH != 1 )
-				throw new Exception("bcrypt is not supported by your PHP installation");
-			$algorythm = '$2a$';
-			//The number of iterations. Higher is safer, but also slower
-			$iterations = 10;
-			return $algorythm . str_pad($iterations,2,'0',STR_PAD_LEFT) . '$' . $salt;
-		}
+	//The auth manager that handles user creation and login. You can provide your own.
+	require_once(dirname(__FILE__)."/authentication/default_auth_manager.php");
+	$authManager = new DefaultAuthManager(); //Todo: decouple this
 
-	//Log the user in using the correct password comparison method
-		if( isset($_POST['username']) && isset($_POST['password']) ){
-			//Attempt to find a user in the database, and connect it
-			$user = R::findOne(
-				'ignition_users',
-				' username=? AND password=?',
-				array( $_POST['username'], crypt( $_POST['password'],getBcryptSalt($_POST['username']) ) )
-			);
+	//Log the user in
+	if( isset($_POST['username']) && isset($_POST['password']) ){
+		$authManager->login($_POST['username'],$_POST['password']);
+	}
 
-			if( !is_null($user) )
-				$_SESSION['username'] = $user->username;
-		}
-
-	//Create the user with the given username and password
-		if( isset($_POST['newusername']) && isset($_POST['newpassword']) && R::count('users') == 0 ){
-			$user = R::dispense('ignition_users');
-			$user->username = $_POST['newusername'];
-			$user->password = crypt( $_POST['newpassword'],getBcryptSalt($_POST['newusername']) );
-			R::store($user);
-			$_SESSION['username'] = $user->username;
-		}
+	//Create the initial user with the given username and password
+	if( isset($_POST['newusername']) && isset($_POST['newpassword']) && !$authManager->hasUsers() ){
+		$authManager->createUser($_POST['newusername'],$_POST['newpassword']);
+	}
 
 	//Show the login form if ?login is appended to the URL
 	//If there are no users in the users table, show the user creation form
-		if( isset($_GET['login']) ){
-			if( R::count('ignition_users') > 0 ){
-				include(dirname(__FILE__)."/templates/login.php");
-			}
-			else{
-				include(dirname(__FILE__)."/templates/createuser.php");
-			}
-			exit();//Do not output the rest of the page
+	if( isset($_GET['login']) ){
+		if( $authManager->hasUsers() ){
+			include(dirname(__FILE__)."/templates/login.php");
 		}
-		elseif( isset($_GET['logout']) ){
-			unset($_SESSION);
-			session_destroy();
+		else{
+			include(dirname(__FILE__)."/templates/createuser.php");
 		}
+		exit(); //Do not output the rest of the page
+	}
+	elseif( isset($_GET['logout']) ){
+		$authManager->logout();
+	}
 
 	//Application state functions
-		function isAdmin(){
-			return ( isset($_SESSION['username']) && !empty($_SESSION['username']) );
-		}
+	function isAdmin(){
+		global $authManager;
+		return $authManager->isUserLoggedIn();
+	}
 
-		function isEditing($block_name){
-			return ( isset($_GET['edit']) && $_GET['edit']==$block_name );
-		}
-
-	//Password hashing functions
-
+	function isEditing($block_name){
+		return ( isset($_GET['edit']) && $_GET['edit']==$block_name );
+	}
 
 	//If gettext isn't enabled, define a fallback function to output text
-		if( !function_exists('_')){
-			function _($string){return $string;}
-		}
+	if( !function_exists('_')){
+		function _($string){return $string;}
+	}
 
-	//Load the default block. Implementations of it are loaded at the end of block.php
-		include_once(dirname(__FILE__)."/blocks/block.php");
+	//Load the default block. Implementations of it are loaded a few lines below
+	include_once(dirname(__FILE__)."/blocks/block.php");
 
-	//Include Block implementations
-		foreach (glob(dirname(__FILE__)."/blocks/*.block.php") as $filename){
-			include_once $filename;
-		}
+	//Include all Block implementations
+	foreach (glob(dirname(__FILE__)."/blocks/*.block.php") as $filename){
+		include_once $filename;
+	}
