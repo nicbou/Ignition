@@ -80,6 +80,6 @@
 		include_once(dirname(__FILE__)."/blocks/block.php");
 
 	//Include Block implementations
-		foreach (glob(dirname(__FILE__)."/*.block.php") as $filename){
+		foreach (glob(dirname(__FILE__)."/blocks/*.block.php") as $filename){
 			include_once $filename;
 		}
