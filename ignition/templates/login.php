@@ -12,7 +12,7 @@
 	</style>
 </head>
 <body>
-	<?php if(!is_admin()): ?>
+	<?php if(!isAdmin()): ?>
 		<form method="POST">
 			<?php
 				if( isset($_POST['username']) && isset($_POST['password']) ){
