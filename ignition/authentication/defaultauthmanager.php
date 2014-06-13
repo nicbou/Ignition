@@ -30,7 +30,7 @@ class DefaultAuthManager {
 	}
 
 	public function isUserLoggedIn(){
-		return ( isset($_SESSION['username']) && !empty($_SESSION['username']) );
+		return !empty($_SESSION['username']);
 	}
 
 	public function hasUsers(){
